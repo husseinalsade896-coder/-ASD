@@ -1,0 +1,6 @@
+{
+  "name": "W Chat",
+  "description": "Global instant messaging Android app with real-time chats, groups, 24h statuses, WebRTC call signaling, E2EE, and admin console.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

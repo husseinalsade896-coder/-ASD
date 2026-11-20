@@ -1,0 +1,220 @@
+{
+  "entities": {
+    "DirectoryProfile": {
+      "title": "DirectoryProfile",
+      "description": "Non-PII public chat directory profile with E2EE public key",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Authenticated Firebase UID" },
+        "username": { "type": "string", "description": "Unique handle" },
+        "displayName": { "type": "string", "description": "Visible display name" },
+        "bio": { "type": "string", "description": "Short user bio" },
+        "avatarColorHex": { "type": "string", "description": "Avatar accent hex color" },
+        "publicKeyBase64": { "type": "string", "description": "ECDH P-256 X509 public key in Base64" },
+        "countryCode": { "type": "string", "description": "Country dial prefix such as +967 or +966" },
+        "onlineStatus": { "type": "string", "enum": ["ONLINE", "OFFLINE", "AWAY"] },
+        "lastSeenPrivacy": { "type": "string", "enum": ["EVERYONE", "CONTACTS", "NOBODY"] },
+        "avatarPrivacy": { "type": "string", "enum": ["EVERYONE", "CONTACTS", "NOBODY"] },
+        "readReceiptsEnabled": { "type": "boolean" },
+        "twoFactorEnabled": { "type": "boolean" },
+        "banned": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["userId", "username", "displayName", "publicKeyBase64", "onlineStatus", "banned", "createdAt", "updatedAt"]
+    },
+    "PrivateUserAccount": {
+      "title": "PrivateUserAccount",
+      "description": "Owner-only PII and private security settings",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "phoneVerified": { "type": "boolean" },
+        "twoStepPinHash": { "type": "string" },
+        "notificationTone": { "type": "string" },
+        "notificationsEnabled": { "type": "boolean" },
+        "blockedUids": { "type": "array" },
+        "languageCode": { "type": "string", "enum": ["ar", "en"] },
+        "darkTheme": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "phoneVerified", "notificationsEnabled", "languageCode", "darkTheme", "createdAt", "updatedAt"]
+    },
+    "LinkedDevice": {
+      "title": "LinkedDevice",
+      "description": "Registered user device session",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "deviceName": { "type": "string" },
+        "platform": { "type": "string" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "deviceName", "platform", "active", "createdAt", "updatedAt"]
+    },
+    "ChatRoom": {
+      "title": "ChatRoom",
+      "description": "Direct 1-to-1 or group chat metadata",
+      "type": "object",
+      "properties": {
+        "chatType": { "type": "string", "enum": ["DIRECT", "GROUP"] },
+        "title": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "adminUids": { "type": "array" },
+        "pinnedByUids": { "type": "array" },
+        "archivedByUids": { "type": "array" },
+        "typingUids": { "type": "array" },
+        "lastMessagePreview": { "type": "string" },
+        "lastMessageSenderId": { "type": "string" },
+        "onlyAdminsCanEdit": { "type": "boolean" },
+        "onlyAdminsCanSend": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chatType", "title", "creatorId", "memberUids", "adminUids", "onlyAdminsCanEdit", "onlyAdminsCanSend", "createdAt", "updatedAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "E2EE encrypted instant message inside a chat",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "messageType": { "type": "string", "enum": ["TEXT", "IMAGE", "VIDEO", "FILE", "VOICE", "LOCATION", "LIVE_LOCATION"] },
+        "ciphertext": { "type": "string" },
+        "iv": { "type": "string" },
+        "encrypted": { "type": "boolean" },
+        "mediaName": { "type": "string" },
+        "mediaSizeBytes": { "type": "integer" },
+        "mediaPreviewBase64": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "liveUntilEpochMs": { "type": "integer" },
+        "replyToMessageId": { "type": "string" },
+        "replyToPreview": { "type": "string" },
+        "forwarded": { "type": "boolean" },
+        "edited": { "type": "boolean" },
+        "deletedForAll": { "type": "boolean" },
+        "readByUids": { "type": "array" },
+        "deliveredToUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chatId", "senderId", "senderName", "memberUids", "messageType", "ciphertext", "encrypted", "forwarded", "edited", "deletedForAll", "createdAt", "updatedAt"]
+    },
+    "StatusStory": {
+      "title": "StatusStory",
+      "description": "24-hour ephemeral user status",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "statusType": { "type": "string", "enum": ["TEXT", "IMAGE", "VIDEO"] },
+        "textContent": { "type": "string" },
+        "backgroundHex": { "type": "string" },
+        "mediaPreviewBase64": { "type": "string" },
+        "privacy": { "type": "string", "enum": ["EVERYONE", "CONTACTS", "ONLY_ME"] },
+        "viewerUids": { "type": "array" },
+        "expiresAtEpochMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerId", "ownerName", "statusType", "privacy", "expiresAtEpochMs", "createdAt", "updatedAt"]
+    },
+    "CallRecord": {
+      "title": "CallRecord",
+      "description": "WebRTC signaling session and call history entry",
+      "type": "object",
+      "properties": {
+        "callerId": { "type": "string" },
+        "callerName": { "type": "string" },
+        "participantUids": { "type": "array" },
+        "callType": { "type": "string", "enum": ["VOICE", "VIDEO", "GROUP_VOICE", "GROUP_VIDEO"] },
+        "status": { "type": "string", "enum": ["RINGING", "ACTIVE", "ENDED", "MISSED", "DECLINED"] },
+        "sdpOffer": { "type": "string" },
+        "sdpAnswer": { "type": "string" },
+        "durationSeconds": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["callerId", "callerName", "participantUids", "callType", "status", "durationSeconds", "createdAt", "updatedAt"]
+    },
+    "AbuseReport": {
+      "title": "AbuseReport",
+      "description": "User safety report reviewed by app admins",
+      "type": "object",
+      "properties": {
+        "reporterId": { "type": "string" },
+        "reportedUserId": { "type": "string" },
+        "reason": { "type": "string" },
+        "status": { "type": "string", "enum": ["OPEN", "REVIEWED", "RESOLVED"] },
+        "adminNotes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["reporterId", "reportedUserId", "reason", "status", "createdAt", "updatedAt"]
+    },
+    "SystemConfig": {
+      "title": "SystemConfig",
+      "description": "Global application configuration and backup health",
+      "type": "object",
+      "properties": {
+        "maintenanceMode": { "type": "boolean" },
+        "maxUploadMb": { "type": "integer" },
+        "registrationEnabled": { "type": "boolean" },
+        "lastBackupEpochMs": { "type": "integer" },
+        "backupStatus": { "type": "string", "enum": ["IDLE", "HEALTHY", "RUNNING"] },
+        "updatedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["maintenanceMode", "maxUploadMb", "registrationEnabled", "lastBackupEpochMs", "backupStatus", "updatedBy", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/directory/{userId}": {
+      "schema": { "$ref": "#/entities/DirectoryProfile" },
+      "description": "Non-PII public chat directory profiles"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/PrivateUserAccount" },
+      "description": "Private PII and user preferences"
+    },
+    "/users/{userId}/devices/{deviceId}": {
+      "schema": { "$ref": "#/entities/LinkedDevice" },
+      "description": "User linked devices"
+    },
+    "/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatRoom" },
+      "description": "Direct and group chat rooms"
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Messages inside chat rooms"
+    },
+    "/statuses/{statusId}": {
+      "schema": { "$ref": "#/entities/StatusStory" },
+      "description": "24-hour user statuses"
+    },
+    "/calls/{callId}": {
+      "schema": { "$ref": "#/entities/CallRecord" },
+      "description": "Call logs and WebRTC signaling"
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/AbuseReport" },
+      "description": "Safety reports for admin review"
+    },
+    "/system/{configId}": {
+      "schema": { "$ref": "#/entities/SystemConfig" },
+      "description": "Global admin configuration"
+    }
+  }
+}
