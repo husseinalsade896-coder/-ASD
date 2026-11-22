@@ -16,6 +16,15 @@ android {
         versionName = "1.0"
     }
 
+    sourceSets {
+        getByName("main") {
+            manifest.srcFile("AndroidManifest.xml")
+            java.setSrcDirs(listOf("."))
+            kotlin.setSrcDirs(listOf("."))
+            res.setSrcDirs(listOf(".", "res"))
+        }
+    }
+
     buildFeatures {
         compose = true
     }
