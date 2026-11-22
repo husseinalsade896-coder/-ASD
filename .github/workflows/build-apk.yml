@@ -23,6 +23,24 @@ jobs:
           fi
           chmod +x gradlew
 
+      - name: Prepare resources layout
+        run: |
+          mkdir -p res/values res/xml res/drawable
+          [ -f file_paths.xml ] && cp file_paths.xml res/xml/
+          [ -f backup_rules.xml ] && cp backup_rules.xml res/xml/
+          [ -f data_extraction_rules.xml ] && cp data_extraction_rules.xml res/xml/
+          [ -f colors.xml ] && cp colors.xml res/values/
+          cat << 'EOF' > res/values/strings.xml
+          <resources>
+              <string name="app_name">WChat</string>
+          </resources>
+          EOF
+          cat << 'EOF' > res/values/themes.xml
+          <resources>
+              <style name="Theme.WChat" parent="android:Theme.Material.Light.NoActionBar" />
+          </resources>
+          EOF
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
@@ -30,5 +48,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: app/build/outputs/apk/debug/*.apk
-          
+          path: |
+            build/outputs/apk/debug/*.apk
+            **/build/outputs/apk/debug/*.apk
