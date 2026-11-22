@@ -21,7 +21,7 @@ android {
             manifest.srcFile("AndroidManifest.xml")
             java.setSrcDirs(listOf("."))
             kotlin.setSrcDirs(listOf("."))
-            res.setSrcDirs(listOf(".", "res"))
+            res.setSrcDirs(listOf("res"))
         }
     }
 
