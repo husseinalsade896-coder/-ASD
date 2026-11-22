@@ -14,5 +14,3 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "WChat"
-include(":app")
-project(":app").projectDir = file(".")
