@@ -26,13 +26,25 @@ jobs:
 
       - name: Prepare resources layout
         run: |
-          mkdir -p res/values res/xml res/drawable res/mipmap-hdpi res/mipmap-mdpi res/mipmap-xhdpi res/mipmap-xxhdpi res/mipmap-xxxhdpi
+          mkdir -p res/values
+          mkdir -p res/xml
+          mkdir -p res/drawable
+          mkdir -p res/mipmap-hdpi
+          mkdir -p res/mipmap-mdpi
+          mkdir -p res/mipmap-xhdpi
+          mkdir -p res/mipmap-xxhdpi
+          mkdir -p res/mipmap-xxxhdpi
+          mkdir -p res/mipmap-anydpi-v26
 
+          # Copy XML resources to correct folders
           for f in *.xml; do
             [ -f "$f" ] || continue
             [ "$f" = "AndroidManifest.xml" ] && continue
 
             case "$f" in
+              ic_launcher.xml|ic_launcher_round.xml)
+                cp "$f" res/mipmap-anydpi-v26/
+                ;;
               *file_paths*|*backup*|*extraction*|*network*)
                 cp "$f" res/xml/
                 ;;
@@ -45,7 +57,7 @@ jobs:
             esac
           done
 
-          # Copy images, but skip launcher icons to avoid duplicate resources
+          # Copy images, excluding launcher icons
           for img in *.png *.jpg *.jpeg *.webp; do
             [ -f "$img" ] || continue
 
@@ -58,6 +70,7 @@ jobs:
             cp "$img" res/drawable/
           done
 
+          # Create strings.xml if missing
           if [ ! -f res/values/strings.xml ]; then
             cat <<'EOF' > res/values/strings.xml
           <resources>
@@ -66,6 +79,7 @@ jobs:
           EOF
           fi
 
+          # Create themes.xml if missing
           if [ ! -f res/values/themes.xml ]; then
             cat <<'EOF' > res/values/themes.xml
           <resources>
@@ -74,6 +88,7 @@ jobs:
           EOF
           fi
 
+          # Generate fallback launcher icons
           python3 - <<'EOF'
           import base64
           import glob
@@ -83,8 +98,12 @@ jobs:
           )
 
           for d in glob.glob("res/mipmap-*"):
+              if "anydpi" in d:
+                  continue
+
               for name in ("ic_launcher.png", "ic_launcher_round.png"):
                   path = f"{d}/{name}"
+
                   with open(path, "wb") as fh:
                       fh.write(png_1x1)
           EOF
