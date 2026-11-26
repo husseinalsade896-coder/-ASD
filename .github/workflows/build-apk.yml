@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -26,41 +27,58 @@ jobs:
       - name: Prepare resources layout
         run: |
           mkdir -p res/values res/xml res/drawable res/mipmap-hdpi res/mipmap-mdpi res/mipmap-xhdpi res/mipmap-xxhdpi res/mipmap-xxxhdpi
+
           for f in *.xml; do
             [ -f "$f" ] || continue
             [ "$f" = "AndroidManifest.xml" ] && continue
+
             case "$f" in
-              *file_paths*|*backup*|*extraction*|*network*) cp "$f" res/xml/ ;;
-              *strings*|*colors*|*themes*|*styles*|*dimens*|*attrs*) cp "$f" res/values/ ;;
-              *) cp "$f" res/drawable/ ;;
+              *file_paths*|*backup*|*extraction*|*network*)
+                cp "$f" res/xml/
+                ;;
+              *strings*|*colors*|*themes*|*styles*|*dimens*|*attrs*)
+                cp "$f" res/values/
+                ;;
+              *)
+                cp "$f" res/drawable/
+                ;;
             esac
           done
+
           for img in *.png *.jpg *.jpeg *.webp; do
             [ -f "$img" ] && cp "$img" res/drawable/
           done
+
           if [ ! -f res/values/strings.xml ]; then
-            cat << 'EOF' > res/values/strings.xml
-<resources>
-    <string name="app_name">WChat</string>
-</resources>
-EOF
+            cat <<'EOF' > res/values/strings.xml
+          <resources>
+              <string name="app_name">WChat</string>
+          </resources>
+          EOF
           fi
+
           if [ ! -f res/values/themes.xml ]; then
-            cat << 'EOF' > res/values/themes.xml
-<resources>
-    <style name="Theme.WChat" parent="android:Theme.Material.Light.NoActionBar" />
-</resources>
-EOF
+            cat <<'EOF' > res/values/themes.xml
+          <resources>
+              <style name="Theme.WChat" parent="android:Theme.Material.Light.NoActionBar" />
+          </resources>
+          EOF
           fi
-          python3 - << 'EOF'
-import base64, glob
-png_1x1 = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==")
-for d in glob.glob("res/mipmap-*"):
-    for name in ("ic_launcher.png", "ic_launcher_round.png"):
-        path = f"{d}/{name}"
-        with open(path, "wb") as fh:
-            fh.write(png_1x1)
-EOF
+
+          python3 - <<'EOF'
+          import base64
+          import glob
+
+          png_1x1 = base64.b64decode(
+              "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+          )
+
+          for d in glob.glob("res/mipmap-*"):
+              for name in ("ic_launcher.png", "ic_launcher_round.png"):
+                  path = f"{d}/{name}"
+                  with open(path, "wb") as fh:
+                      fh.write(png_1x1)
+          EOF
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
