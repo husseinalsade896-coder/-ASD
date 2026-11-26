@@ -45,8 +45,17 @@ jobs:
             esac
           done
 
+          # Copy images, but skip launcher icons to avoid duplicate resources
           for img in *.png *.jpg *.jpeg *.webp; do
-            [ -f "$img" ] && cp "$img" res/drawable/
+            [ -f "$img" ] || continue
+
+            case "$img" in
+              ic_launcher.png|ic_launcher_round.png)
+                continue
+                ;;
+            esac
+
+            cp "$img" res/drawable/
           done
 
           if [ ! -f res/values/strings.xml ]; then
